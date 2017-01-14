@@ -1,1 +1,26 @@
-[{"StreamName":"A Haber","StreamWebsite":"http://www.ahaber.com.tr/webtv/canli-yayin","StreamSource":"http://trkvz-live.ercdn.net/ahaberhd/ahaberhd_720p.m3u8?st=eaM76WmyRmNU6mPFnIzWNw&e=1484465714","StreamUniqueKeyword":"720p.m3u8","StreamRefreshInterval":2,"StreamLastRefresh":"2017-01-14T21:01:08.7511491+01:00"},{"StreamName":"TRT Haber","StreamWebsite":"http://www.trt.net.tr/anasayfa/canli.aspx?y=tv&k=trt1","StreamSource":"http://trtcanlitv-lh.akamaihd.net/i/TRT1HD_1@181842/index_1500_av-b.m3u8?sd=10&rebase=on","StreamUniqueKeyword":"index_1500_av-b.m3u8","StreamRefreshInterval":2,"StreamLastRefresh":"2017-01-14T21:01:10.7555098+01:00"},{"StreamName":"HaberTurk","StreamWebsite":"http://www.haberturk.com/canliyayin","StreamSource":"http://mn-i.mncdn.com/haberturk/smil:haberturk.smil/chunklist_w323359469_b848000.m3u8?token=970721af7fb95b56b67befb7a868f59c4c36b224f650d47b","StreamUniqueKeyword":".m3u8?token","StreamRefreshInterval":1,"StreamLastRefresh":"2017-01-14T21:02:17.2491756+01:00"}]
+[
+    {
+        "StreamName": "A Haber",
+        "StreamWebsite": "http://www.ahaber.com.tr/webtv/canli-yayin",
+        "StreamSource": "http://trkvz-live.ercdn.net/ahaberhd/ahaberhd_720p.m3u8?st=eaM76WmyRmNU6mPFnIzWNw&e=1484465714",
+        "StreamUniqueKeyword": "720p.m3u8",
+        "StreamRefreshInterval": 2,
+        "StreamLastRefresh": "2017-01-14T21:01:08.7511491+01:00"
+    },
+    {
+        "StreamName": "TRT Haber",
+        "StreamWebsite": "http://www.trt.net.tr/anasayfa/canli.aspx?y=tv&k=trt1",
+        "StreamSource": "http://trtcanlitv-lh.akamaihd.net/i/TRT1HD_1@181842/index_1500_av-b.m3u8?sd=10&rebase=on",
+        "StreamUniqueKeyword": "index_1500_av-b.m3u8",
+        "StreamRefreshInterval": 2,
+        "StreamLastRefresh": "2017-01-14T21:01:10.7555098+01:00"
+    },
+    {
+        "StreamName": "HaberTurk",
+        "StreamWebsite": "http://www.haberturk.com/canliyayin",
+        "StreamSource": "http://mn-i.mncdn.com/haberturk/smil:haberturk.smil/chunklist_w323359469_b848000.m3u8?token=970721af7fb95b56b67befb7a868f59c4c36b224f650d47b",
+        "StreamUniqueKeyword": ".m3u8?token",
+        "StreamRefreshInterval": 1,
+        "StreamLastRefresh": "2017-01-14T21:02:17.2491756+01:00"
+    }
+]

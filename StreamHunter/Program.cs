@@ -7,8 +7,8 @@ namespace StreamHunter
     {
         public static void Main(string[] args)
         {
-            Hunter hunter = new Hunter("C:/Users/Onur/Google Drive/workspace/NET/TiviBackend/playlist.tivi");
-            hunter.Schedule();
+            Hunter Hunter = new Hunter("C:/Users/Onur/Google Drive/workspace/C++/TTV/Resources/playlist.tivi");
+            Hunter.Schedule();
         }
     }
 }

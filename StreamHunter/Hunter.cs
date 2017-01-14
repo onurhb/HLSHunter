@@ -7,7 +7,6 @@ using OpenQA.Selenium.Chrome;
 using Proxy = OpenQA.Selenium.Proxy;
 using System.Linq;
 using System.Threading;
-using OpenQA.Selenium.Internal;
 
 namespace StreamHunter
 {
@@ -24,47 +23,47 @@ namespace StreamHunter
     public class Hunter
     {
         // - Member variables
-        private Proxy proxy;
-
-        private IWebDriver driver;
+        private Proxy Proxy;
+        private IWebDriver Driver;
 
         // - Path to stream file
-        private readonly string streamFile;
+        private readonly string StreamFile;
 
-        // - List of all streams
-        private List<Stream> streams = new List<Stream>();
+        // - List of all Streams
+        private List<Stream> Streams = new List<Stream>();
 
-        // - Used to determine if proxy found stream
-        private string lastFoundStream;
+        // - Used to determine if Proxy found stream
+        private string LastFoundStream;
 
         // - Used to determine if stream link is valid
-        private string currentStreamKeyword;
+        private string CurrentStreamKeyword;
 
-        public Hunter(string streamFile)
+        public Hunter(string StreamFile)
         {
-            this.streamFile = streamFile;
+            this.StreamFile = StreamFile;
 
-            initializeStreamsFromFile();
-            initializeProxy();
-            initializeBrowser();
+            InitializeStreamsFromFile();
+            InitializeProxy();
+            InitializeBrowser();
         }
 
         ~Hunter()
         {
             Console.WriteLine("Application exits.");
-            driver.Quit();
+
+            Driver.Quit();
             FiddlerApplication.Shutdown();
         }
 
-
-        private void initializeProxy()
+        private void InitializeProxy()
         {
-            Console.WriteLine("Initializing proxy");
+            Console.WriteLine("Initializing Proxy");
+
             FiddlerApplication.Startup(5000, true, false);
             FiddlerApplication.BeforeResponse += RequestCallback;
 
             // - Selenium Proxy
-            proxy = new Proxy
+            Proxy = new Proxy
             {
                 Kind = ProxyKind.Manual,
                 IsAutoDetect = false,
@@ -72,91 +71,92 @@ namespace StreamHunter
             };
         }
 
-        private void initializeBrowser()
+        private void InitializeBrowser()
         {
             Console.WriteLine("Initializing Browser");
 
             // - Create options for chrome
-            var options = new ChromeOptions {Proxy = proxy};
+            var options = new ChromeOptions {Proxy = Proxy};
             options.AddArgument("ignore-certificate-errors");
             options.AddArgument("mute-audio");
 
             // - Initialize selenium for browser automation
-            driver = new ChromeDriver(options);
+            Driver = new ChromeDriver(options);
         }
 
-        private void initializeStreamsFromFile()
+        private void InitializeStreamsFromFile()
         {
-            Console.WriteLine("Reading file: " + streamFile);
+            Console.WriteLine("Reading file: " + StreamFile);
 
-            // - Read json file and parse streams
-            var json = System.IO.File.ReadAllText(streamFile);
-            streams = JsonConvert.DeserializeObject<List<Stream>>(json);
+            // - Read json file and parse Streams
+            var json = System.IO.File.ReadAllText(StreamFile);
+            Streams = JsonConvert.DeserializeObject<List<Stream>>(json);
         }
 
         private void UpdateStreamsFile()
         {
-            Console.WriteLine("Writing to file: " + streamFile);
+            Console.WriteLine("Writing to file: " + StreamFile);
 
-            var json = JsonConvert.SerializeObject(streams);
-            System.IO.File.WriteAllText(streamFile, json);
+            var json = JsonConvert.SerializeObject(Streams);
+            System.IO.File.WriteAllText(StreamFile, json);
         }
 
         public void Schedule()
         {
-            double timer = streams.OrderByDescending(x => x.StreamRefreshInterval == -1)
+            double timer = Streams.OrderByDescending(x => x.StreamRefreshInterval == -1)
                 .ThenBy(x => x.StreamLastRefresh)
                 .Last()
                 .StreamRefreshInterval;
 
+            // - Loop if only timer is > 0
             while (timer > 0)
             {
-                foreach (Stream stream in streams)
+                foreach (Stream stream in Streams)
                 {
                     // - Skip if already found and timer interval is null
-                    if(stream.StreamRefreshInterval == -1 && !string.IsNullOrEmpty(stream.StreamSource)) continue;
+                    if (stream.StreamRefreshInterval == -1 && !string.IsNullOrEmpty(stream.StreamSource)) continue;
 
                     var deltaTime = (DateTime.Now - stream.StreamLastRefresh).Hours;
 
-                    if(deltaTime < stream.StreamRefreshInterval && !string.IsNullOrEmpty(stream.StreamSource)) continue;
+                    if (deltaTime < stream.StreamRefreshInterval &&
+                        !string.IsNullOrEmpty(stream.StreamSource)) continue;
 
                     stream.StreamSource = FindStreamSource(stream.StreamWebsite, stream.StreamUniqueKeyword);
                     stream.StreamLastRefresh = DateTime.Now;
                 }
 
                 UpdateStreamsFile();
-                driver.Navigate().GoToUrl("about:blank");
+                Driver.Navigate().GoToUrl("about:blank");
                 Thread.Sleep((int) TimeSpan.FromHours(timer).TotalMilliseconds);
             }
         }
 
-
         public string FindStreamSource(string streamWebsite, string streamKeyword)
         {
-            // - Reset lastFoundStream so we can use this to see if callback found a stream
-            lastFoundStream = "";
+            // - Reset LastFoundStream so we can use this to see if callback found a stream
+            LastFoundStream = "";
 
             // - Used to find the stream
-            currentStreamKeyword = streamKeyword;
+            CurrentStreamKeyword = streamKeyword;
 
             // - Navigate
             Console.WriteLine("Navigating to: " + streamWebsite);
-            driver.Navigate().GoToUrl(streamWebsite);
+            Driver.Navigate().GoToUrl(streamWebsite);
 
             var time = DateTime.Now;
 
             // - Wait until callback has found the stream
-            while (string.IsNullOrWhiteSpace(lastFoundStream)) if ((DateTime.Now - time).Minutes > 1) return "";
+            while (string.IsNullOrWhiteSpace(LastFoundStream)) if ((DateTime.Now - time).Minutes > 1) return "";
 
-            Console.WriteLine("Found stream: " + lastFoundStream);
-            return lastFoundStream;
+            Console.WriteLine("Found stream: " + LastFoundStream);
+            return LastFoundStream;
         }
 
         private void RequestCallback(Session s)
         {
             // - Skip if request does not contain stream keyword
-            if (!s.fullUrl.Contains(currentStreamKeyword)) return;
-            lastFoundStream = s.fullUrl;
+            if (!s.fullUrl.Contains(CurrentStreamKeyword)) return;
+            LastFoundStream = s.fullUrl;
         }
     }
 }
