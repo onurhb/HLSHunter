@@ -18,7 +18,7 @@ namespace StreamHunter
         public string StreamSource { get; set; }
         public string StreamUniqueKeyword { get; set; }
         public int StreamRefreshInterval { get; set; }
-        public DateTime? StreamLastRefresh { get; set; }
+        public DateTime StreamLastRefresh { get; set; }
     }
 
     public class Hunter
@@ -104,16 +104,30 @@ namespace StreamHunter
 
         public void Schedule()
         {
-            int timer = streams.OrderByDescending(x => x.StreamRefreshInterval).LastOrDefault().StreamRefreshInterval;
+            double timer = streams.OrderByDescending(x => x.StreamRefreshInterval == -1)
+                .ThenBy(x => x.StreamLastRefresh)
+                .Last()
+                .StreamRefreshInterval;
 
-            foreach (Stream stream in streams)
+            while (timer > 0)
             {
-                Console.WriteLine("Navigating to: " + stream.StreamName);
-                stream.StreamSource = FindStreamSource(stream.StreamWebsite, stream.StreamUniqueKeyword);
-                Console.WriteLine("Found stream: " + stream.StreamSource);
-            }
+                foreach (Stream stream in streams)
+                {
+                    // - Skip if already found and timer interval is null
+                    if(stream.StreamRefreshInterval == -1 && !string.IsNullOrEmpty(stream.StreamSource)) continue;
 
-            Thread.Sleep(TimeSpan.FromHours(timer).Milliseconds);
+                    var deltaTime = (DateTime.Now - stream.StreamLastRefresh).Hours;
+
+                    if(deltaTime < stream.StreamRefreshInterval && !string.IsNullOrEmpty(stream.StreamSource)) continue;
+
+                    stream.StreamSource = FindStreamSource(stream.StreamWebsite, stream.StreamUniqueKeyword);
+                    stream.StreamLastRefresh = DateTime.Now;
+                }
+
+                UpdateStreamsFile();
+                driver.Navigate().GoToUrl("about:blank");
+                Thread.Sleep((int) TimeSpan.FromHours(timer).TotalMilliseconds);
+            }
         }
 
 
@@ -126,12 +140,15 @@ namespace StreamHunter
             currentStreamKeyword = streamKeyword;
 
             // - Navigate
+            Console.WriteLine("Navigating to: " + streamWebsite);
             driver.Navigate().GoToUrl(streamWebsite);
 
             // - Wait until callback has found the stream
             while (string.IsNullOrWhiteSpace(lastFoundStream))
             {
-            } // - TODO : Timeout
+            }
+
+            Console.WriteLine("Found stream: " + lastFoundStream);
             return lastFoundStream;
         }
 
