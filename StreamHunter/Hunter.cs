@@ -143,10 +143,10 @@ namespace StreamHunter
             Console.WriteLine("Navigating to: " + streamWebsite);
             driver.Navigate().GoToUrl(streamWebsite);
 
+            var time = DateTime.Now;
+
             // - Wait until callback has found the stream
-            while (string.IsNullOrWhiteSpace(lastFoundStream))
-            {
-            }
+            while (string.IsNullOrWhiteSpace(lastFoundStream)) if ((DateTime.Now - time).Minutes > 1) return "";
 
             Console.WriteLine("Found stream: " + lastFoundStream);
             return lastFoundStream;
