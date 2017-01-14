@@ -131,17 +131,17 @@ namespace StreamHunter
             }
         }
 
-        public string FindStreamSource(string streamWebsite, string streamKeyword)
+        public string FindStreamSource(string StreamWebsite, string StreamKeyword)
         {
             // - Reset LastFoundStream so we can use this to see if callback found a stream
             LastFoundStream = "";
 
             // - Used to find the stream
-            CurrentStreamKeyword = streamKeyword;
+            CurrentStreamKeyword = StreamKeyword;
 
             // - Navigate
-            Console.WriteLine("Navigating to: " + streamWebsite);
-            Driver.Navigate().GoToUrl(streamWebsite);
+            Console.WriteLine("Navigating to: " + StreamWebsite);
+            Driver.Navigate().GoToUrl(StreamWebsite);
 
             var time = DateTime.Now;
 
