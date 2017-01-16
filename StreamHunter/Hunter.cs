@@ -8,6 +8,7 @@ using OpenQA.Selenium.Chrome;
 using Proxy = OpenQA.Selenium.Proxy;
 using System.Linq;
 using System.Threading;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace StreamHunter
 {
@@ -114,24 +115,25 @@ namespace StreamHunter
 
         public void Schedule()
         {
-            double Time = Streams.OrderByDescending(x => x.StreamRefreshInterval == -1)
-                .ThenBy(x => x.StreamLastRefresh)
-                .Last()
-                .StreamRefreshInterval;
+            var t = Streams.OrderByDescending(x => x.StreamRefreshInterval == -1)
+                .ThenByDescending(x => x.StreamRefreshInterval).Last().StreamRefreshInterval;
+
+
 
             // - Loop if only timer is > 0
-            while (Time > 0)
+            while (t > 0)
             {
                 foreach (Stream S in Streams)
                 {
                     // - Skip if already found and timer interval is null
                     if (S.StreamRefreshInterval == -1 && !string.IsNullOrEmpty(S.StreamSource)) continue;
 
-                    var TimeSpan = DateTime.Now - S.StreamLastRefresh;
-                    var DeltaTime = TimeSpan?.Hours ?? 0;
+
+                    DateTime Last = S.StreamLastRefresh ?? DateTime.Now;
+                    TimeSpan deltaTime = DateTime.Now.Subtract(Last);
 
                     // - Skip if source URL is fresh
-                    if (DeltaTime < S.StreamRefreshInterval && !string.IsNullOrEmpty(S.StreamSource)) continue;
+                    if (deltaTime.TotalHours < S.StreamRefreshInterval && !string.IsNullOrEmpty(S.StreamSource)) continue;
 
                     // - Else find source URL
                     S.StreamSource = FindStreamSource(S.StreamWebsite, S.StreamUniqueKeyword);
@@ -141,7 +143,7 @@ namespace StreamHunter
                 // - Update file
                 UpdateStreamsFile();
                 Driver.Navigate().GoToUrl("about:blank");
-                Thread.Sleep((int) TimeSpan.FromHours(Time).TotalMilliseconds);
+                Thread.Sleep((int) TimeSpan.FromHours(t).TotalMilliseconds);
             }
         }
 
