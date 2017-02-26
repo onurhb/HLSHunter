@@ -24,19 +24,24 @@ HLSHunter needs a json document formatted as following:
         "StreamRefreshInterval": <refresh interval in hours (-1 for never)>,
         "StreamLastRefresh": "<leave blank not required>"
     },
-    etc
+    ...
+]
 
 ```
 
 > StreamName : Give this stream a name  
-> StreamWebsite : The website to navigate to 
-> StreamSource : When the program is done, this field will include the m3u8 link
+> StreamWebsite : The website to navigate to  
+> StreamSource : When the program is done, this field will include the m3u8 link  
 > StreamUniqueKeyword : You need to find this manually (use chrome dev tools - network tab ). This is used to find the valid m3u8 file by checking if this keyword is index of the m3u8 link  
 > StreamRefreshInterval : Set refresh interval. It will automatically renew the m3u8 link 
 > StreamLastRefresh : A timestamp for when the stream link was added 
 
-Use then Hunter class to start the job `Hunter Hunter = new Hunter("C:/Users/Onur/Google Drive/workspace/C++/TTV/Resources/playlist.tivi",
+Use then Hunter class to start the job: 
+
+```
+Hunter Hunter = new Hunter("C:/Users/Onur/Google Drive/workspace/C++/TTV/Resources/playlist.tivi",
                 "C:/Users/Onur/Google Drive/workspace/NET/TiviBackend/ext.crx");
-            Hunter.Schedule();`  
+Hunter.Schedule();
+```  
             
 > NB! if you want to block ads, simply add ext.crx file for the extension as second parameter. This can be downloaded from the internet.
