@@ -39,8 +39,7 @@ HLSHunter needs a json document formatted as following:
 Use then Hunter class to start the job: 
 
 ```
-Hunter Hunter = new Hunter("C:/Users/Onur/Google Drive/workspace/C++/TTV/Resources/playlist.tivi",
-                "C:/Users/Onur/Google Drive/workspace/NET/TiviBackend/ext.crx");
+Hunter Hunter = new Hunter("C:/<path to the json document as shown above>", "<adblock_ext.crx>");
 Hunter.Schedule();
 ```  
             
