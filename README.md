@@ -1,15 +1,6 @@
 # HLSHunter
 A small program written in C# that uses selenium and fiddlecore to find m3u8 stream on a website by simulating a real chrome browser.
 
-# Background
-If you're familir with HLS stream then you know that all HLS streams uses a standard common file called ".m3u8".  
-This file includes small video segments which is put together consecutively as you're streaming.  
-This file is not bound to a particular websites which means that any media player supporting HLS protocol can stream this file.  
-
-However, many websites nowadays protects this file by adding a token to it. This token is renewed every given time.  
-The only way to get this token is by running the javascript on the websites which then requests this ".m3u8" file.  
-I wanted to solve this problem by creating a small program which can spitt out the stream files on any website. 
-
 # Using
 HLSHunter needs a json document formatted as following:  
 
